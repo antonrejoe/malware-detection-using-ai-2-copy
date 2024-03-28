@@ -100,6 +100,10 @@ const AddURL = () => {
             <>
               <Malicious content="the website is bad" />{" "}
             </>
+          ) : result.result == " The website does not exist" ? (
+            <>
+              <Malicious content={result.result} />{" "}
+            </>
           ) : (
             <>Enter a valid url</>
           )}

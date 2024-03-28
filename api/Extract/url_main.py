@@ -1,8 +1,3 @@
-'''
- 
-'''
-
-import pandas as pd
 import numpy as np
 import random
 from sklearn.model_selection import train_test_split
@@ -10,7 +5,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import pickle
 import sys
+import requests
 
+def check_website_exists(url):
+    url_https = "https://" +url
+    y = 0
+    try:
+        response = requests.head(url_https)
+        if response.status_code != 404:
+            y =1
+    except requests.ConnectionError:
+        y = -1
+    return y
 
 def sanitization(web):
     web = web.lower()
@@ -31,7 +37,6 @@ def sanitization(web):
 
 urls = []
 urls.append(sys.argv[1])
-# print (urls)
 
 # Using whitelist filter as the model fails in many legit cases since the biggest problem is not finding the malicious urls but to segregate the good ones
 whitelist = ['hackthebox.eu','root-me.org','gmail.com']
@@ -53,13 +58,16 @@ y_predict = lgr.predict(x)
 
 for site in whitelist:
     s_url.append(site)
-# print(s_url)
 
 predict = list(y_predict)
-for j in range(0,len(whitelist)):
-    predict.append('good')
+web_exist = check_website_exists(sys.argv[1])
+if web_exist == 1 :
+    for j in range(0,len(whitelist)):
+        predict.append('good')
 # print("\nThe entered domain is: ", predict[0])
 
-
 if __name__ == "__main__":
-    print(predict[0])
+    if web_exist == 1 or 0 :
+        print(predict[0])
+    else:
+        print("The website does not exist")
